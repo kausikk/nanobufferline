@@ -15,11 +15,11 @@ There will be bugs.
 ## Install
 
 ```lua
-vim.pack.add({ "https://github.com/kausikk/nanobufferline", name = "nanobufferline" })
+vim.pack.add({..., { src = "https://github.com/kausikk/nanobufferline", name = "nanobufferline" }, ...})
 ```
 
 Not lazy-loaded. Setup is **not** required, but the highlight color of the
-current buffer can be overridden:
+current buffer can be overridden. Default is "Error".
 
 ```lua
 -- See ':h highlight-groups' for more options
