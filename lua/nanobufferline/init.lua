@@ -7,6 +7,10 @@ columns = {}
 lastmark = -1
 ns_id = vim.api.nvim_create_namespace("_nbl")
 
+M.setup(opts) = function(opts)
+	M.hl_group = opts.hl_group
+end
+
 M._change_buffer = function(ev)
 	local ibuf = 0 
 	for i, buf in ipairs(buffers) do
