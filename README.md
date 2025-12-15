@@ -4,7 +4,7 @@
 
 Yet another statusline plugin for Neovim. Displays the list of buffers and
 highlights the current buffer. Makes it nicer to switch buffers with :bn and
-:bp (I've mapped these to <Tab> and <S-Tab>). I still make use of a buffer
+:bp (I've mapped these to \<Tab\> and <S-Tab>). I still make use of a buffer
 picker (thank you Telescope).
 
 Under the hood, nbl overlays a narrow and wide floating window directly above
@@ -18,8 +18,8 @@ There will be bugs.
 vim.pack.add({ "https://github.com/kausikk/nanobufferline", name = "nanobufferline" })
 ```
 
-Not lazy-loaded. Setup is **not** required, but the highlight of the current
-buffer can be overridden:
+Not lazy-loaded. Setup is **not** required, but the highlight color of the
+current buffer can be overridden:
 
 ```lua
 -- See ':h highlight-groups' for more options
