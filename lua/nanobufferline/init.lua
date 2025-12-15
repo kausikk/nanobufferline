@@ -94,7 +94,7 @@ M._window = function()
 		vim.api.nvim_buf_set_name(nbl_buf, "_nbl_")
 		vim.bo[nbl_buf].readonly = true
 	end
-	-- This fails when doing :%bd or :%bw, idk fix, so wrap in pcall
+	-- This fails when doing :%bd or :%bw, idk how to fix, so wrap in pcall
 	local res, win = pcall(vim.api.nvim_open_win, nbl_buf, false, {
 		row = 0, col = 0, relative = "laststatus", height = 1,
 		width = vim.o.columns - 20, style = "minimal"

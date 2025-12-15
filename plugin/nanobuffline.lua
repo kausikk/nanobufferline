@@ -3,12 +3,7 @@ if _G.nbl_loaded then
 end
 _G.nbl_loaded = true
 
-vim.api.nvim_create_autocmd("BufEnter", {
-	callback = function(ev) require("nanobufferline")._change_buffer(ev) end
-})
-vim.api.nvim_create_autocmd("BufAdd", {
-	callback = function(ev) require("nanobufferline")._list_buffer(ev) end
-})
-vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout" }, {
-	callback = function(ev) require("nanobufferline")._unlist_buffer(ev) end
-})
+-- No lazy loading, but that's ok :)
+vim.api.nvim_create_autocmd("BufEnter", { callback = require("nanobufferline")._change_buffer })
+vim.api.nvim_create_autocmd("BufAdd", { callback = require("nanobufferline")._list_buffer })
+vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout" }, { callback = require("nanobufferline")._unlist_buffer })
