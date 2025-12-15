@@ -6,7 +6,7 @@ https://github.com/user-attachments/assets/5223a7fc-73ad-4c50-822f-b27008dfe3c8
 
 Yet another statusline plugin for Neovim. Displays the list of buffers and
 highlights the current buffer. Makes it nicer to switch buffers with :bn and
-:bp (I've mapped these to \<Tab\> and <S-Tab>). I still make use of a buffer
+:bp (I've mapped these to \<Tab\> and \<S-Tab\>). I still make use of a buffer
 picker (thank you Telescope).
 
 Under the hood, nbl overlays a narrow and wide floating window directly above
