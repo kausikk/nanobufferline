@@ -12,8 +12,6 @@ picker (thank you Telescope).
 Under the hood, nbl overlays a narrow and wide floating window directly above
 the statusline, so it most likely interferes with other statusline plugins.
 
-There will be bugs.
-
 ## Install
 
 ```lua
