@@ -1,6 +1,7 @@
 local M = { hl_group = "Error" }
 
 local nbl_buf, lastmark, ns_id = -1, -1, vim.api.nvim_create_namespace("_nbl")
+ -- Convenient to store this way, can bisect() columns and concat() names
 local buffers, names, columns = {}, {}, {}
 
 function M.setup(opts)
@@ -48,12 +49,9 @@ function M._list_buffer(ev)
 end
 
 function M._unlist_buffer(ev)
-	if vim.fn.buflisted(ev.buf) ~= 1 and vim.bo[ev.buf].buftype ~= "help" then
-		return
-	end
-	M._window()
 	local ibuf = M._find_buf_in_listed(ev.buf)
 	if ibuf == 0 then return end
+	M._window()
 	local shift = #names[ibuf]
 	for i = ibuf + 1, #columns do
 		columns[i] = columns[i] - shift
