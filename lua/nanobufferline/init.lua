@@ -1,29 +1,17 @@
 local M = { hl_group = "Error" }
 
-nbl_buf = -1
-buffers = {}
-names = {}
-columns = {}
-lastmark = -1
-ns_id = vim.api.nvim_create_namespace("_nbl")
+local nbl_buf, lastmark, ns_id = -1, -1, vim.api.nvim_create_namespace("_nbl")
+local buffers, names, columns = {}, {}, {}
 
-M.setup = function(opts)
+function M.setup(opts)
 	M.hl_group = opts.hl_group
 end
 
-M._change_buffer = function(ev)
-	local ibuf = 0 
-	for i, buf in ipairs(buffers) do
-		if buf == ev.buf then
-			ibuf = i
-			break
-		end
-	end
-	if ibuf == 0 then
-		return
-	end
+function M._change_buffer(ev)
+	local ibuf = M._find_buf_in_listed(ev.buf)
+	if ibuf == 0 then return end
 	vim.api.nvim_buf_del_extmark(nbl_buf, ns_id, lastmark)
-	local col = 2
+	local col = 2 -- First two chars are always spaces
 	if ibuf > 1 then
 		col = columns[ibuf - 1] + 2
 	end
@@ -37,7 +25,7 @@ M._change_buffer = function(ev)
 	end
 end
 
-M._list_buffer = function(ev)
+function M._list_buffer(ev)
 	if vim.fn.buflisted(ev.buf) ~= 1 then
 		return
 	end
@@ -48,32 +36,24 @@ M._list_buffer = function(ev)
 	else
 		name = "  " .. vim.fn.fnamemodify(name, ":t")
 	end
-	local last = 0
+	local lastcol = 0
 	if #columns > 0 then
-		last = columns[#columns]
+		lastcol = columns[#columns]
 	end
 	table.insert(buffers, ev.buf)
 	table.insert(names, name)
-	table.insert(columns, last + #name)
+	table.insert(columns, lastcol + #name)
 	vim.api.nvim_buf_set_lines(nbl_buf, 0, 1, false, { table.concat(names, "") })
 	vim.bo[nbl_buf].modified = false
 end
 
-M._unlist_buffer = function(ev)
+function M._unlist_buffer(ev)
 	if vim.fn.buflisted(ev.buf) ~= 1 and vim.bo[ev.buf].buftype ~= "help" then
 		return
 	end
 	M._window()
-	local ibuf = 0 
-	for i, buf in ipairs(buffers) do
-		if buf == ev.buf then
-			ibuf = i
-			break
-		end
-	end
-	if ibuf == 0 then
-		return
-	end
+	local ibuf = M._find_buf_in_listed(ev.buf)
+	if ibuf == 0 then return end
 	local shift = #names[ibuf]
 	for i = ibuf + 1, #columns do
 		columns[i] = columns[i] - shift
@@ -85,13 +65,19 @@ M._unlist_buffer = function(ev)
 	vim.bo[nbl_buf].modified = false
 end
 
-M._window = function()
+function M._find_buf_in_listed(search_buf)
+	for i, buf in ipairs(buffers) do
+		if buf == search_buf then return i end
+	end
+	return 0
+end
+
+function M._window()
 	if vim.fn.bufwinid(nbl_buf) ~= -1 then
 		return
 	end
 	if not vim.api.nvim_buf_is_valid(nbl_buf) then
 		nbl_buf = vim.api.nvim_create_buf(false, true)
-		vim.api.nvim_buf_set_name(nbl_buf, "_nbl_")
 		vim.bo[nbl_buf].readonly = true
 	end
 	-- This fails when doing :%bd or :%bw, idk how to fix, so wrap in pcall
