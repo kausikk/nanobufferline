@@ -1,8 +1,8 @@
 local M = { hl_group = "Error" }
 
 local nbl_buf, lastmark, ns_id = -1, -1, vim.api.nvim_create_namespace("_nbl")
- -- Convenient to store this way, can bisect() columns and concat() names
-local buffers, names, columns = {}, {}, {}
+ -- Convenient to store this way, can bisect() buffers and concat() names
+local buffers, names, columns = { -1 }, { "" }, { 0 }
 
 function M.setup(opts)
 	M.hl_group = opts.hl_group
@@ -12,10 +12,7 @@ function M._change_buffer(ev)
 	local ibuf = M._find_buf_in_listed(ev.buf)
 	if ibuf == 0 then return end
 	vim.api.nvim_buf_del_extmark(nbl_buf, ns_id, lastmark)
-	local col = 2 -- First two chars are always spaces
-	if ibuf > 1 then
-		col = columns[ibuf - 1] + 2
-	end
+	local col = columns[ibuf - 1] + 2 -- First two chars are always spaces
 	lastmark = vim.api.nvim_buf_set_extmark(
 		nbl_buf, ns_id, 0, col, { end_col = columns[ibuf], hl_group = M.hl_group }
 	)
@@ -37,13 +34,14 @@ function M._list_buffer(ev)
 	else
 		name = "  " .. vim.fn.fnamemodify(name, ":t")
 	end
-	local lastcol = 0
-	if #columns > 0 then
-		lastcol = columns[#columns]
+	local ibuf = vim.list.bisect(buffers, ev.buf)
+	local shift = #name
+	for i = ibuf, #columns do
+		columns[i] = columns[i] + shift
 	end
-	table.insert(buffers, ev.buf)
-	table.insert(names, name)
-	table.insert(columns, lastcol + #name)
+	table.insert(buffers, ibuf, ev.buf)
+	table.insert(names, ibuf, name)
+	table.insert(columns, ibuf, columns[ibuf - 1] + #name)
 	vim.api.nvim_buf_set_lines(nbl_buf, 0, 1, false, { table.concat(names, "") })
 	vim.bo[nbl_buf].modified = false
 end
