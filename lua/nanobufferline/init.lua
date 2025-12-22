@@ -9,8 +9,8 @@ function M.setup(opts)
 end
 
 function M._change_buffer(ev)
-	local ibuf = M._find_buf_in_listed(ev.buf)
-	if ibuf == 0 then return end
+	local ibuf = vim.list.bisect(buffers, ev.buf)
+	if buffers[ibuf] ~= ev.buf then return end
 	vim.api.nvim_buf_del_extmark(nbl_buf, ns_id, lastmark)
 	local col = columns[ibuf - 1] + 2 -- First two chars are always spaces
 	lastmark = vim.api.nvim_buf_set_extmark(
@@ -47,8 +47,8 @@ function M._list_buffer(ev)
 end
 
 function M._unlist_buffer(ev)
-	local ibuf = M._find_buf_in_listed(ev.buf)
-	if ibuf == 0 then return end
+	local ibuf = vim.list.bisect(buffers, ev.buf)
+	if buffers[ibuf] ~= ev.buf then return end
 	M._window()
 	local shift = #names[ibuf]
 	for i = ibuf + 1, #columns do
@@ -59,13 +59,6 @@ function M._unlist_buffer(ev)
 	table.remove(columns, ibuf)
 	vim.api.nvim_buf_set_lines(nbl_buf, 0, 1, false, { table.concat(names, "") })
 	vim.bo[nbl_buf].modified = false
-end
-
-function M._find_buf_in_listed(search_buf)
-	for i, buf in ipairs(buffers) do
-		if buf == search_buf then return i end
-	end
-	return 0
 end
 
 function M._window()
