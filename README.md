@@ -1,4 +1,10 @@
-# nanobufferline (nbl) 
+# nanobufferline (nbl)
+
+## Archive notice
+
+I don't use neovim anymore, so I'm shelving this!
+
+---
 
 *visions of editors past, and then jumping required ahead*
 
